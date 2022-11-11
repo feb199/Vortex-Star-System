@@ -34,7 +34,7 @@ class Event:
         
         print(f"\n\n\n{dashes} {self.displayName} {dashes}")
         if speedOverride is not None:
-            typeWriter(self.content, 0)
+            print(self.content)
         else:
             typeWriter(self.content, self.printSpeed)
         print(f"\n")
