@@ -72,7 +72,22 @@ class Ship:
         if self.captain == None:
             resultCaptainName = InputItem("Captain Name").onExecute()
             if resultCaptainName[0]:
-                self.captain = CaptainPerson(resultCaptainName[1])
+                isDefault = None
+                for person in defaultCrew:
+                    if person.name.lower() == resultCaptainName[1].lower():
+                        isDefault = person
+                
+                if isDefault is not None:
+                    self.captain = CaptainPerson(isDefault.name, isDefault.id)
+                    
+                    newCrew = []
+                    for person in self.crew:
+                        if person.id != isDefault.id:
+                            newCrew.append(person)
+                    
+                    self.crew = newCrew
+                else:
+                    self.captain = CaptainPerson(resultCaptainName[1])
             else:
                 captainChoice = choice(defaultCrew)
                 self.captain = CaptainPerson(captainChoice.name, captainChoice.id)
@@ -104,6 +119,8 @@ class PlayerShip(Ship):
         idsJSON["playerShip"].append(self.id)
         with open("ids.json", "w") as outfile:
             json.dump(idsJSON, outfile)
+        
+        self.specialEvents = {}
     
     
     # self.id = newID
@@ -133,6 +150,8 @@ class PlayerShip(Ship):
             self.type = shipJSON["type"]
             self.player = shipJSON["player"]
             self.level = shipJSON["level"]
+            
+            self.specialEvents = shipJSON["specialEvents"]
             
             self.name = shipJSON["name"]
             self.shipName = shipJSON["shipName"]

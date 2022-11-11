@@ -1,4 +1,6 @@
-import sys
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import keyboard
 from time import sleep
 

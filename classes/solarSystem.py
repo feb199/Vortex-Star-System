@@ -10,6 +10,8 @@ from utils.console import clear, bcolors
 from classes.ship import Ship
 from classes.menu import OptionItem, TextItem
 
+from game.mainStory import desertPlanetEvent, metalPlanetEvent, greenPlanetEvent, oceanPlanetEvent, icyPlanetEvent
+
 
 def readTxtFile(txtPath):
     txtContent = []
@@ -286,10 +288,16 @@ class Planet:
                 self.moonsOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
             moonResult = self.moonsOptionsItem.onExecute(self)
             
-            print(moonResult)
+            if not moonResult[0]: return moonResult
+            
+            return [True, None, moonResult]
         return self.onCancel()
     
+    def onSpecialEvent(self):
+        pass
+    
     def onExecute(self, passThrough = None, passThroughTxt = None):
+        self.onSpecialEvent()
         self.onRender()
         return self.onInput()
     
@@ -350,7 +358,8 @@ class Sun:
             self.structureOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
         structureResult = self.structureOptionsItem.onExecute(self, "Structures")
         
-        print(structureResult)
+        if not structureResult[0]: return structureResult
+        
         return [True, None, structureResult]
     
     def onExecute(self):
@@ -406,7 +415,7 @@ class Moon:
         print(f"\n\n\n{dashes} {self.displayName} Moon {dashes}")
     
     def onInput(self):
-        return self
+        return self.onCancel()
     
     def onExecute(self):
         self.onRender()
@@ -476,30 +485,60 @@ class IcyPlanet(Planet):
     
     def __init__(self, fparent, fnumMoons = None, fforceMoon = False):
         super().__init__("Icy", fparent,fnumMoons, fforceMoon)
+    
+    def onSpecialEvent(self):
+        if self.type not in Ship.player.specialEvents:
+            icyPlanetEvent().onExecute()
+            Ship.player.specialEvents[self.type] = True
+            Ship.player.save()
 planetTypes.append(IcyPlanet)
 
 class OceanPlanet(Planet):
     
     def __init__(self, fparent,fnumMoons = None, fforceMoon = False):
         super().__init__("Ocean", fparent,fnumMoons, fforceMoon)
+    
+    def onSpecialEvent(self):
+        if self.type not in Ship.player.specialEvents:
+            oceanPlanetEvent().onExecute()
+            Ship.player.specialEvents[self.type] = True
+            Ship.player.save()
 planetTypes.append(OceanPlanet)
 
 class GreenPlanet(Planet):
     
     def __init__(self, fparent,fnumMoons = None, fforceMoon = False):
         super().__init__("Green", fparent,fnumMoons, fforceMoon)
+    
+    def onSpecialEvent(self):
+        if self.type not in Ship.player.specialEvents:
+            greenPlanetEvent().onExecute()
+            Ship.player.specialEvents[self.type] = True
+            Ship.player.save()
 planetTypes.append(GreenPlanet)
 
 class MetalPlanet(Planet):
     
     def __init__(self, fparent,fnumMoons = None, fforceMoon = False):
         super().__init__("Metal", fparent,fnumMoons, fforceMoon)
+    
+    def onSpecialEvent(self):
+        if self.type not in Ship.player.specialEvents:
+            metalPlanetEvent().onExecute()
+            Ship.player.specialEvents[self.type] = True
+            Ship.player.save()
 planetTypes.append(MetalPlanet)
 
 class DesertPlanet(Planet):
     
     def __init__(self, fparent,fnumMoons = None, fforceMoon = False):
         super().__init__("Desert", fparent,fnumMoons, fforceMoon)
+    
+    def onSpecialEvent(self):
+        if self.type not in Ship.player.specialEvents:
+            desertPlanetEvent().onExecute()
+            Ship.player.specialEvents[self.type] = True
+            Ship.player.save()
 planetTypes.append(DesertPlanet)
 
 
@@ -549,8 +588,13 @@ class Wormhole(Structure):
             self.structureOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
         structureResult = self.structureOptionsItem.onExecute(self, "Structures")
         
-        print(structureResult)
-        return [True, None, structureResult]
+        if not structureResult[0]: return structureResult
+        if not structureResult[2][0]: return structureResult
+        
+        structureOption = structureResult[2][2]
+        
+        print(structureOption)
+        return [True, None, structureOption]
     
     def onExecute(self):
         self.onRender()

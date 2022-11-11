@@ -9,7 +9,7 @@ from utils.json import toJSON
 from classes.ship import Ship
 from classes.solarSystem import SolarSystem
 
-from game.mainStory import endGameStory
+from game.mainStory import story1, endGameStory
 
 
 def game():
@@ -17,10 +17,15 @@ def game():
     ship = Ship.player
     
     while ship.level < 20:
+        prevShipLevel = ship.level
+        
         if ship.level < 4:
             SolarSystem(forceSun=True).onExecute()
         else:
             SolarSystem().onExecute()
+        
+        if prevShipLevel == 2:
+            story1().onExecute()
     
     if ship.level >= 20:
         endGameStory()
