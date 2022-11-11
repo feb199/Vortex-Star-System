@@ -14,7 +14,7 @@ from game.story.endgame import endgame
 story1Content = "The crew are on the way to another planet when they are suddenly attacked by aliens What should the crew do?"
 story1Options = [
     EventOption("Fire Ships Weapons", "The ship uses its main weapon."),
-    EventOption("try to communicate", "You attempt to communicate with the aliens it appears they don't understand you.")
+    EventOption("Try to communicate", "You attempt to communicate with the aliens it appears they don't understand you.")
 ]
 def story1(): return Event("Attacked By Alien", story1Options, story1Content)
 
