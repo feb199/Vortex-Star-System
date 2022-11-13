@@ -6,25 +6,12 @@ from pathlib import Path
 from time import sleep
 
 from utils.console import clear, bcolors
+from utils.readWrite import readTxtFile
 
 from classes.ship import Ship
 from classes.menu import OptionItem, TextItem
 
 from game.mainStory import desertPlanetEvent, metalPlanetEvent, greenPlanetEvent, oceanPlanetEvent, icyPlanetEvent
-
-
-def readTxtFile(txtPath):
-    txtContent = []
-    if txtPath.is_file():
-        with open(txtPath, "r") as openfile:
-            txtContent = [line.rstrip() for line in openfile]
-    else:
-        raise Exception(f"{bcolors.FAIL}{txtPath} file is missing{bcolors.ENDC}")
-
-    if len(txtContent) <= 0:
-        raise Exception(f"{bcolors.FAIL}{txtPath} file has no content{bcolors.ENDC}")
-    
-    return txtContent
 
 
 defaultPlanetNames = readTxtFile(Path("planetNames.txt"))
@@ -144,7 +131,7 @@ class SolarSystem:
             "Structures": self.structures,
             "Suns": self.suns
         }
-        if skipTo in options:            
+        if skipTo is not None and skipTo in options:            
             if skipTo not in self.placeOptionsItems:
                 placeOptionsItem = OptionItem(f"Explore {skipTo}", options[skipTo], "placeResult")
                 placeOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
@@ -153,6 +140,7 @@ class SolarSystem:
             
             print(placeResult)
             
+            return [True, None, placeResult]
         else:
             if len(self.exploreOptions) <= 0:
                 if self.numPlanets > 0:
@@ -187,6 +175,8 @@ class SolarSystem:
                 placeResult = self.placeOptionsItems[exploreOption.content].onExecute(self, exploreOption.content)
                 
                 print(placeResult)
+                
+                return [True, None, placeResult]
             else:
                 raise Exception(f"{bcolors.FAIL}'{exploreOption.content}' Some how not in 'options'{bcolors.ENDC}")
     
@@ -200,7 +190,7 @@ class SolarSystem:
         if type == "exploreOption":
             exit()
         elif type == "placeResult":
-            self.onExecute()
+            return self.onExecute()
 
 # Base Classes
 class Planet:
@@ -287,8 +277,6 @@ class Planet:
                 self.moonsOptionsItem = OptionItem(f"Explore Moons", self.moons, "structureResult")
                 self.moonsOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
             moonResult = self.moonsOptionsItem.onExecute(self)
-            
-            if not moonResult[0]: return moonResult
             
             return [True, None, moonResult]
         return self.onCancel()
@@ -422,7 +410,7 @@ class Moon:
         return self.onInput()
 
     def onCancel(self, type = None):
-        self.parent.onExecute()
+        return self.parent.onExecute()
 
 class Structure:
     
@@ -665,7 +653,7 @@ class DysonSphere(Structure):
         
         Ship.player.level += 1
         Ship.player.save()
-        return self
+        return [ True, None, self ]
     
     def onExecute(self):
         self.onRender()
