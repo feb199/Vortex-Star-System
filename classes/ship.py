@@ -214,7 +214,7 @@ class PlayerShip(Ship):
                 self.systems.append(systemTypes[system["type"]](system["name"]).load(system))
     
     def save(self):
-        with open(f"saves/{self.shipName}.json", "w") as outfile:
+        with open(os.path.join(savePath, f"{self.shipName}.json"), "w") as outfile:
             outfile.write(toJSON(self))
 
 class NormalShip(PlayerShip):
