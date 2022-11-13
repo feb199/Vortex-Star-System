@@ -132,7 +132,7 @@ class SolarSystem:
             "Suns": self.suns
         }
         if skipTo is not None and skipTo in options:            
-            if skipTo not in self.placeOptionsItems:
+            if skipTo not in self.placeOptionsItems and len(options[skipTo]) > 0:
                 placeOptionsItem = OptionItem(f"Explore {skipTo}", options[skipTo], "placeResult")
                 placeOptionsItem.returnTxt = "To return to explore options press: Backspace or Space"
                 self.placeOptionsItems[skipTo] = placeOptionsItem
@@ -290,7 +290,7 @@ class Planet:
         return self.onInput()
     
     def onCancel(self, type = None):
-        self.parent.onExecute("Planets")
+        return self.parent.onExecute("Planets")
 
 class Sun:
     
@@ -355,7 +355,7 @@ class Sun:
         return self.onInput()
     
     def onCancel(self, type = None):
-        self.parent.onExecute("Suns")
+        return self.parent.onExecute("Suns")
 
 class Moon:
     
@@ -456,14 +456,14 @@ class Structure:
         print(f"\n\n\n{dashes} {self.displayName} Structure {dashes}")
     
     def onInput(self):
-        return self
+        return [ True, None, self ]
     
     def onExecute(self):
         self.onRender()
         return self.onInput()
     
     def onCancel(self, type = None):
-        self.parent.onExecute("Structures")
+        return self.parent.onExecute("Structures")
 
 
 
@@ -589,7 +589,7 @@ class Wormhole(Structure):
         return self.onInput()
     
     def onCancel(self, type):
-        self.parent.onExecute()
+        return self.parent.onExecute()
 
 class DysonSphere(Structure):
     
